@@ -1,6 +1,5 @@
-
 // CREATE VPC
-resource "aws_vpc" "MY_VPC" {
+resource "aws_vpc" "this_MY_VPC" {
   cidr_block       =  var.vpc_cidr
   instance_tenancy = "default"
 
@@ -9,32 +8,32 @@ resource "aws_vpc" "MY_VPC" {
   }
 }
 // PUBLIC SUBNETS
-resource "aws_subnet" "public_subnets01" {
-  vpc_id     = aws_vpc.MY_VPC.id
+resource "aws_subnet" "this_public_subnets01" {
+  vpc_id     = aws_vpc.this_MY_VPC.id
   availability_zone = var.availability_zone
   cidr_block = var.pub_cidr
 }
 
 // internet gateway
-resource "aws_internet_gateway" "MY_IG" {
-  vpc_id = aws_vpc.MY_VPC.id
+resource "aws_internet_gateway" "this_MY_IG" {
+  vpc_id = aws_vpc.this_MY_VPC.id
 }
 
   // PUBLIC ROUTE TABLE
-resource "aws_route_table" "PUBLIC_RT" {
-  vpc_id = aws_vpc.MY_VPC.id
+resource "aws_route_table" "this_PUBLIC_RT" {
+  vpc_id = aws_vpc.this_MY_VPC.id
 }
 // routes
-resource "aws_route" "route_public" {
-  route_table_id            = aws_route_table.PUBLIC_RT.id
+resource "aws_route" "this_route_public" {
+  route_table_id            = aws_route_table.this_PUBLIC_RT.id
   destination_cidr_block    = var.destination_cidr
-  gateway_id = aws_internet_gateway.MY_IG.id
+  gateway_id = aws_internet_gateway.this_MY_IG.id
 }
 
 // rt association
-resource "aws_route_table_association" "RTAS_PUBLIC" {
-  subnet_id      = aws_subnet.public_subnets01.id
-  route_table_id = aws_route_table.PUBLIC_RT.id
+resource "aws_route_table_association" "this_RTAS_PUBLIC" {
+  subnet_id      = aws_subnet.this_public_subnets01.id
+  route_table_id = aws_route_table.this_PUBLIC_RT.id
 }
 
 // ssh key
@@ -46,22 +45,22 @@ resource "aws_key_pair" "this_key" {
 
 // security group
 
-resource "aws_security_group" "my_sg" {
+resource "aws_security_group" "this_my_sg" {
   name        = "allow_ssh"
   description = "Allow ssh in inbound traffic"
-  vpc_id      = aws_vpc.MY_VPC.id
+  vpc_id      = aws_vpc.this_MY_VPC.id
 
   ingress {
     from_port        = var.ssh_port
     to_port          = var.ssh_port
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.MY_VPC.cidr_block]
+    cidr_blocks      = [aws_vpc.this_MY_VPC.cidr_block]
   }
 }
  
  
   // create ec2 instance
-  resource "aws_instance" "this" {
+  resource "aws_instance" "this_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
   key_name = aws_key_pair.this_key.key_name
