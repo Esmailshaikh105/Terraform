@@ -1,7 +1,7 @@
 variable "M_keyname" {
-  type    = string
+  type = string
 }
 
 variable "M_public_key_path" {
-  type    = string
+  type = string
 }
