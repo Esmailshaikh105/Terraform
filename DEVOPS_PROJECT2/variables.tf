@@ -96,41 +96,66 @@ variable "L_app_cidrs" {
   type = list(any)
 }
 
-// this is for DB 
-variable "L_db_keyname" {
+// this is for alb
+
+variable "L_lb_sg_name" {
   type = string
 }
 
-variable "L_db_public_key_path" {
-  type = string
-}
-
-variable "L_db_ami_id" {
-  type = string
-}
-
-variable "L_db_instance_type" {
-  type = string
-}
-
-variable "L_db_tags" {
-  type = map(any)
-}
-
-variable "L_db_sg_name" {
-  type = string
-}
-
-variable "L_db_sg_ports" {
+variable "L_lb_sg_ports" {
   type = list(any)
 }
 
-variable "L_db_proto" {
+variable "L_lb_proto" {
   type = string
 }
 
-variable "L_db_cidrs" {
+variable "L_lb_cidrs" {
   type = list(any)
 }
 
+variable "l_lb_name" {
+  type = string
+}
 
+variable "l_lb_type" {
+  type = string
+}
+
+
+// this is for rds
+
+variable "L_rds_sg_name" {
+  type = string
+}
+
+variable "L_rds_sg_ports" {
+  type = list(any)
+}
+
+variable "L_rds_proto" {
+  type = string
+}
+
+variable "L_rds_cidrs" {
+  type = list(any)
+}
+
+variable "l_db_name" {
+  type = string
+}
+
+variable "l_username" {
+  type = string
+}
+
+variable "l_password" {
+  type = string
+}
+
+
+// this is for db_subnet /grp
+
+variable "l_db_sg_name" {
+  type = string
+}

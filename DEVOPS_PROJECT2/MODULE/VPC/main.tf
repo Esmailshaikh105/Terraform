@@ -1,26 +1,26 @@
 // CREATE VPC
 resource "aws_vpc" "M_MY_VPC" {
-  cidr_block       =  var.M_vpc_cidr
+  cidr_block       = var.M_vpc_cidr
   instance_tenancy = "default"
 
 }
 
- // PRIVATE SUBNETS
+// PRIVATE SUBNETS
 
- resource "aws_subnet" "M_private_subnets01" {
-  count = length(var.M_avaialabilty_zone)
-  vpc_id     = aws_vpc.M_MY_VPC.id
-  availability_zone = element (var.M_availability_zone,count.index)
-  cidr_block = element(var.M_pvt_cidr,count.index)
+resource "aws_subnet" "M_private_subnets01" {
+  count             = 2
+  vpc_id            = aws_vpc.M_MY_VPC.id
+  availability_zone = element(var.M_availability_zone, count.index)
+  cidr_block        = element(var.M_pvt_cidr, count.index)
 }
 
 
 // PUBLIC SUBNETS
 resource "aws_subnet" "M_public_subnets01" {
-  count = length(var.M_avaialabilty_zone)
-  vpc_id     = aws_vpc.M_MY_VPC.id
-   availability_zone = element (var.M_availability_zone,count.index)
-  cidr_block = element(var.M_pub_cidr,count.index)
+  count             = 2
+  vpc_id            = aws_vpc.M_MY_VPC.id
+  availability_zone = element(var.M_availability_zone, count.index)
+  cidr_block        = element(var.M_pub_cidr, count.index)
 }
 
 
@@ -39,32 +39,32 @@ resource "aws_eip" "M_my_eip" {
 
 resource "aws_nat_gateway" "M_MY_NAT" {
   allocation_id = aws_eip.M_my_eip.id
-  subnet_id    = aws_subnet.M_public_subnets01[0].id
-  }
+  subnet_id     = aws_subnet.M_public_subnets01[0].id
+}
 
-  // PUBLIC ROUTE TABLE
+// PUBLIC ROUTE TABLE
 resource "aws_route_table" "M_PUBLIC_RT" {
   vpc_id = aws_vpc.M_MY_VPC.id
 }
-  //PRIVATE_ROUTE_TABLE
-  resource "aws_route_table" "M_PRIVATE_RT" {
+//PRIVATE_ROUTE_TABLE
+resource "aws_route_table" "M_PRIVATE_RT" {
   vpc_id = aws_vpc.M_MY_VPC.id
-  }
+}
 
 
 // PUBLIC AND PRIVATE ROUTE TABLE [IG AND NAT]
 
 resource "aws_route" "M_route_public" {
-  route_table_id            = aws_route_table.M_PUBLIC_RT.id
-  destination_cidr_block    = var.M_destination_cidr
-  gateway_id = aws_internet_gateway.M_MY_IGW.id
+  route_table_id         = aws_route_table.M_PUBLIC_RT.id
+  destination_cidr_block = var.M_destination_cidr
+  gateway_id             = aws_internet_gateway.M_MY_IGW.id
 }
 
 
 resource "aws_route" "M_route_private" {
-  route_table_id            = aws_route_table.M_PRIVATE_RT.id
-  destination_cidr_block    =  var.M_destination_cidr
-    gateway_id = aws_nat_gateway.M_MY_NAT.id
+  route_table_id         = aws_route_table.M_PRIVATE_RT.id
+  destination_cidr_block = var.M_destination_cidr
+  gateway_id             = aws_nat_gateway.M_MY_NAT.id
 }
 
 // ROUTE TABLE ASSOCIATION

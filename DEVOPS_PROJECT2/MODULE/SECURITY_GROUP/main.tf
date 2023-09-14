@@ -1,7 +1,7 @@
 resource "aws_security_group" "M_sg" {
-  name = var.M_sg_name
+  name   = var.M_sg_name
   vpc_id = var.M_vpc_id
-     
+
   dynamic "ingress" {
     for_each = var.M_sg_ports
     iterator = port

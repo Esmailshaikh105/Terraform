@@ -1,19 +1,9 @@
-resource "aws_lb" "test" {
-  name               = "test-lb-tf"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+#Load Balancer for WEB
 
-  enable_deletion_protection = true
+resource "aws_lb" "M_cloudethix-lb" {
+  name               = var.M_lb_name
+  load_balancer_type = var.M_lb_type
+  security_groups    = var.M_sg_ids
+  subnets            = var.M_subnet_ids
 
-  access_logs {
-    bucket  = aws_s3_bucket.lb_logs.id
-    prefix  = "test-lb"
-    enabled = true
-  }
-
-  tags = {
-    Environment = "production"
-  }
 }

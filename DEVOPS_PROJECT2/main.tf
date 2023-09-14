@@ -23,9 +23,8 @@ module "web_security_group" {
   M_sg_ports = var.L_web_sg_ports
   M_proto    = var.L_web_proto
   M_cidrs    = var.L_web_cidrs
-  M_vpc_id = module.vpc.my_vpc_id
+  M_vpc_id   = module.vpc.my_vpc_id
 }
-
 
 module "web_ec2_instance" {
   source               = "./MODULE/EC2"
@@ -36,7 +35,6 @@ module "web_ec2_instance" {
   M_security_group_ids = [module.web_security_group.security_group_id]
   M_subnet_id          = module.vpc.public_subnet_id
 }
-
 
 // this is for App
 module "app_ssh_key_pair" {
@@ -51,7 +49,7 @@ module "app_security_group" {
   M_sg_ports = var.L_app_sg_ports
   M_proto    = var.L_app_proto
   M_cidrs    = var.L_app_cidrs
-  M_vpc_id = module.vpc.my_vpc_id
+  M_vpc_id   = module.vpc.my_vpc_id
 
 }
 
@@ -65,32 +63,53 @@ module "app_ec2_instance" {
   M_subnet_id          = module.vpc.private_subnet_id
 }
 
+// module for alb
 
-// this is for DB
-module "db_ssh_key_pair" {
-  source            = "./MODULE/SSH_KEY"
-  M_keyname         = var.L_db_keyname
-  M_public_key_path = var.L_db_public_key_path
-}
 
-module "db_security_group" {
+module "load_balancer" {
   source     = "./MODULE/SECURITY_GROUP"
-  M_sg_name  = var.L_db_sg_name
-  M_sg_ports = var.L_db_sg_ports
-  M_proto    = var.L_db_proto
-  M_cidrs    = var.L_db_cidrs
-  M_vpc_id = module.vpc.my_vpc_id
-}
-
-module "db_ec2_instance" {
-  source               = "./MODULE/EC2"
-  M_ami_id             = var.L_db_ami_id
-  M_instance_type      = var.L_db_instance_type
-  M_tags               = var.L_db_tags
-  M_key_name           = module.db_ssh_key_pair.ssh_key_pair_key_name
-  M_security_group_ids = [module.db_security_group.security_group_id]
-  M_subnet_id          = module.vpc.private_subnet_id2
+  M_sg_name  = var.L_lb_sg_name
+  M_sg_ports = var.L_lb_sg_ports
+  M_proto    = var.L_lb_proto
+  M_cidrs    = var.L_lb_cidrs
+  M_vpc_id   = module.vpc.my_vpc_id
 
 }
 
+module "load_balancer_instance" {
+  source       = "./MODULE/ALB"
+  M_lb_name    = var.l_lb_name
+  M_lb_type    = var.l_lb_type
+  M_sg_ids     = [module.load_balancer.security_group_id]
+  M_subnet_ids = [module.vpc.public_subnet_id, module.vpc.public_subnet_id2]
+
+}
+
+// module for db subnet group
+module "db_sub_grp" {
+  source          = "./MODULE/DB_SG"
+  M_db_sg_name    = var.l_db_sg_name
+  M_db_subnet_ids = [module.vpc.private_subnet_id, module.vpc.private_subnet_id2]
+
+}
+// module for rds 
+module "rds_sg" {
+  source     = "./MODULE/SECURITY_GROUP"
+  M_sg_name  = var.L_rds_sg_name
+  M_sg_ports = var.L_rds_sg_ports
+  M_proto    = var.L_rds_proto
+  M_cidrs    = var.L_rds_cidrs
+  M_vpc_id   = module.vpc.my_vpc_ids
+}
+
+// module for rds_instance
+module "rds_instance" {
+  source                   = "./MODULE/RDS"
+  M_db_name                = var.l_db_name
+  M_username               = var.l_username
+  M_password               = var.l_password
+  M_db_subnet_group_name   = module.db_sub_grp.db_name
+  M_vpc_security_group_ids = ["${module.rds_sg.security_group_id}"]
+
+}
 

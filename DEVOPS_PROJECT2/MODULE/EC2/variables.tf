@@ -15,7 +15,7 @@ variable "M_tags" {
 }
 
 variable "M_security_group_ids" {
-  type = list
+  type = list(any)
 }
 
 variable "M_subnet_id" {

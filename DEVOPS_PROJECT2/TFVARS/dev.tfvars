@@ -24,24 +24,38 @@ L_app_proto           = "tcp"
 L_app_cidrs           = ["0.0.0.0/0"]
 
 
-
-
-// this is for db
-L_db_keyname         = "db-ssh-key"
-L_db_public_key_path = "/root/.ssh/id_rsa.pub"
-L_db_ami_id          = "ami-08a52ddb321b32a8c"
-L_db_instance_type   = "t2.micro"
-L_db_tags            = { Name = "db-instance" }
-L_db_sg_name         = "db-sg"
-L_db_sg_ports        = [22, 3306]
-L_db_proto           = "tcp"
-L_db_cidrs           = ["0.0.0.0/0"]
-
-
-
 // this is for vpc
-L_vpc_cidr = "10.0.0.0/16"
-L_availability_zone = ["us-east-1a","us-east-1b"]
-L_pvt_cidr = ["10.0.2.0/24","10.0.3.0/24"]
-L_pub_cidr = ["10.0.0.0/24","10.0.1.0/24"]
-L_destination_cidr = "0.0.0.0/0"
+L_vpc_cidr          = "10.0.0.0/16"
+L_availability_zone = ["us-east-1a", "us-east-1b"]
+L_pvt_cidr          = ["10.0.2.0/24", "10.0.3.0/24"]
+L_pub_cidr          = ["10.0.0.0/24", "10.0.1.0/24"]
+L_destination_cidr  = "0.0.0.0/0"
+
+
+
+//this is for lb
+
+L_lb_sg_name  = "lb-sg"
+L_lb_sg_ports = [80, 443]
+L_lb_proto    = "tcp"
+L_lb_cidrs    = ["0.0.0.0/0"]
+l_lb_name     = "3T-application-lb"
+l_lb_type     = "application"
+
+
+
+// this is rds
+
+L_rds_sg_name  = "rds-sg"
+L_rds_sg_ports = [3306]
+L_rds_proto    = "tcp"
+L_rds_cidrs    = ["0.0.0.0/0"]
+l_rds_name     = "rds_3tier"
+l_rds_type     = "rds"
+l_db_name      = "esmai"
+l_username     = "esmail"
+l_password     = "esmailshaikh"
+
+
+//db subnet group
+l_db_sg_name = "db_sg"
